@@ -1,10 +1,4 @@
-#![warn(
-clippy::all,
-clippy::pedantic,
-clippy::nursery,
-clippy::cargo,
-)]
-
+#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![allow(clippy::implicit_return)]
 
 use crate::benchmark::BenchmarkResult;
@@ -110,9 +104,8 @@ impl Solution {
         Self {
             path,
             solve: Box::new(solve),
-            solve_parallel: solve_parallel.map(|f| {
-                Box::new(f) as Box<dyn Fn(&Path, Part) -> Result<SolutionResult, Error>>
-            }),
+            solve_parallel: solve_parallel
+                .map(|f| Box::new(f) as Box<dyn Fn(&Path, Part) -> Result<SolutionResult, Error>>),
         }
     }
 

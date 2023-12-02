@@ -1,5 +1,5 @@
 use crate::Part;
-use core::fmt::{Formatter, Display};
+use core::fmt::{Display, Formatter};
 use core::iter::Sum;
 use core::ops::Add;
 use core::time::Duration;
@@ -50,7 +50,6 @@ impl Add<&Self> for BenchmarkResult {
 
 #[allow(clippy::single_char_lifetime_names)]
 impl<'a> Sum<&'a Self> for BenchmarkResult {
-
     #[inline]
     #[allow(clippy::arithmetic_side_effects)]
     fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
@@ -59,7 +58,6 @@ impl<'a> Sum<&'a Self> for BenchmarkResult {
 }
 
 impl Sum for BenchmarkResult {
-
     #[inline]
     #[allow(clippy::arithmetic_side_effects)]
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
@@ -68,7 +66,6 @@ impl Sum for BenchmarkResult {
 }
 
 impl Display for BenchmarkResult {
-
     #[inline]
     #[allow(clippy::min_ident_chars)]
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {

@@ -3,10 +3,10 @@ use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
 use std::collections::HashMap;
 
+mod xx;
 mod y2016;
 mod y2022;
 mod y2023;
-mod xx;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]

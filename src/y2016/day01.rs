@@ -60,11 +60,10 @@ fn part2(steps: &[(Matrix2<i32>, i32)]) -> String {
     let mut dir = Point2::new(1, 0);
     steps.iter().find(|(rot, amount)| {
         dir = rot * dir;
-        (0..*amount)
-            .any(|_| {
-                pos = pos + dir;
-                !visited.insert(pos.to_array())
-            })
+        (0..*amount).any(|_| {
+            pos = pos + dir;
+            !visited.insert(pos.to_array())
+        })
     });
     (pos.x.abs() + pos.y.abs()).to_string()
 }

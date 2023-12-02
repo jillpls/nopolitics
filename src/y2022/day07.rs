@@ -119,7 +119,8 @@ fn part2(structure: &FileStructure) -> String {
 }
 
 fn get_dir_name(l: &str) -> &str {
-    l.split_whitespace().next_back()
+    l.split_whitespace()
+        .next_back()
         .unwrap_or_default()
         .trim()
         .trim_matches('/')

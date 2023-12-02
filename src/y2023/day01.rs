@@ -14,7 +14,11 @@ fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     Ok(match part {
         Part::Part(1) => SolutionResult::part1(part1(&input), benchmark.stop_part_and_owned()),
         Part::Part(2) => SolutionResult::part2(part2(&input), benchmark.stop_part_and_owned()),
-        Part::All => SolutionResult::part1and2(part1(&input), part2(&input), benchmark.stop_part_and_owned()),
+        Part::All => SolutionResult::part1and2(
+            part1(&input),
+            part2(&input),
+            benchmark.stop_part_and_owned(),
+        ),
         _ => {
             return Err(Error::Default);
         }
