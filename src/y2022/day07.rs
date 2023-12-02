@@ -1,12 +1,12 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let lines = nopolitics::parse::file_to_lines(path)?;
     benchmark.stop_parse_start_part();
@@ -43,10 +43,10 @@ fn build_structure(lines: &[String]) -> FileStructure {
     let mut structure = FileStructure::default();
     let mut current_dir: Option<usize> = None;
     for (i, l) in lines.iter().enumerate() {
-        if l.starts_with("$") {
+        if l.starts_with('$') {
             match &l[2..4] {
                 "cd" => {
-                    let new_dir_name = get_dir_name(&l);
+                    let new_dir_name = get_dir_name(l);
                     if new_dir_name == ".." {
                         current_dir = structure.nodes[current_dir.unwrap()].parent;
                         continue;
@@ -119,9 +119,7 @@ fn part2(structure: &FileStructure) -> String {
 }
 
 fn get_dir_name(l: &str) -> &str {
-    l.split_whitespace()
-        .rev()
-        .next()
+    l.split_whitespace().next_back()
         .unwrap_or_default()
         .trim()
         .trim_matches('/')

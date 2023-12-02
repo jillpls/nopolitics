@@ -26,17 +26,17 @@ pub fn file_to_lines<P: AsRef<Path>>(path: P) -> Result<Vec<String>, ParseError>
     reader
         .lines()
         .collect::<Result<Vec<String>, std::io::Error>>()
-        .map_err(|e| ParseError::from(e))
+        .map_err(ParseError::from)
 }
 
-pub fn split_clustered<'a, T, F>(vec: &[T], predicate: F) -> Vec<&[T]>
+pub fn split_clustered<T, F>(vec: &[T], predicate: F) -> Vec<&[T]>
 where
     F: FnMut(&T) -> bool,
 {
     vec.split(predicate).collect::<Vec<&[T]>>()
 }
 
-pub fn split_on_empty_lines<'a>(vec: &[String]) -> Vec<&[String]> {
+pub fn split_on_empty_lines(vec: &[String]) -> Vec<&[String]> {
     split_clustered(vec, |s| s.trim().is_empty())
 }
 
@@ -55,7 +55,7 @@ pub fn vec_to_tuple<T: Clone>(vec: &[T]) -> Result<(T, T), Error> {
     ))
 }
 
-fn parse_to_grid(input: &str) -> Vec<Vec<char>> {
+pub fn parse_to_grid(input: &str) -> Vec<Vec<char>> {
     input
         .lines()
         .map(|x| x.chars().collect::<Vec<_>>())
@@ -68,11 +68,11 @@ mod tests {
 
     #[test]
     fn test_grid() {
-        let input = r#"30373
+        let input = "30373
 25512
 65332
 33549
-35390"#;
+35390";
         let grid = parse_to_grid(input);
         assert_eq!(grid[0], "30373".chars().collect::<Vec<char>>())
     }

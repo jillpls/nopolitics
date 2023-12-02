@@ -1,14 +1,14 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Point2, Solution, SolutionResult};
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
 #[allow(dead_code, unreachable_code, unused_variables, unused_mut)] // TODO
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let instructions: Vec<Vec<Point2<i32>>> = nopolitics::parse::file_to_lines(path)?
         .iter()
@@ -49,8 +49,8 @@ fn part1(instructions: &[Vec<Point2<i32>>]) -> String {
     instructions
         .iter()
         .map(|v| {
-            prev_result = v.iter().fold(prev_result.clone(), |prev, add| {
-                let new = prev + add.clone();
+            prev_result = v.iter().fold(prev_result, |prev, add| {
+                let new = prev + *add;
                 Point2::new(new.x.signum(), new.y.signum())
             });
             prev_result
@@ -93,14 +93,13 @@ fn part2(instructions: &[Vec<Point2<i32>>]) -> String {
     instructions
         .iter()
         .map(|v| {
-            prev_result = v.iter().fold(prev_result.clone(), |prev, add| {
-                let new = prev + add.clone();
-                let next = if map.contains_key(&new.to_array()) {
+            prev_result = v.iter().fold(prev_result, |prev, add| {
+                let new = prev + *add;
+                if map.contains_key(&new.to_array()) {
                     new
                 } else {
                     prev
-                };
-                next
+                }
             });
             prev_result
         })

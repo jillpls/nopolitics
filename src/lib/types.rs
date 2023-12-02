@@ -129,7 +129,7 @@ impl<T: MatrixValue + Clone> Mul<Point2<T>> for &Matrix2<T> {
 impl<T: MatrixValue + One + Zero> Mul<Self> for Matrix2<T> {
     type Output = Self;
 
-    fn mul(self, rhs: Self) -> Self::Output {
+    fn mul(self, _rhs: Self) -> Self::Output {
         todo!()
     }
 }

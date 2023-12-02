@@ -2,14 +2,14 @@ use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{parse::ParseError, Error, Matrix2, Part, Point2, Solution, SolutionResult};
 use num_traits::One;
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
 #[allow(dead_code, unreachable_code, unused_variables, unused_mut)] // TODO
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let s = std::fs::read_to_string(path).map_err(|e| Error::Parse(ParseError::from(e)))?;
     let steps = s
@@ -21,7 +21,7 @@ fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
                     'L' => Matrix2::rot270(),
                     _ => Matrix2::one(),
                 },
-                (&x.trim()[1..]).parse::<i32>().unwrap(),
+                x.trim()[1..].parse::<i32>().unwrap(),
             )
         })
         .collect::<Vec<(Matrix2<i32>, i32)>>();
@@ -47,7 +47,7 @@ fn part1(steps: &[(Matrix2<i32>, i32)]) -> String {
             (Point2::new(0, 0), Point2::new(1, 0)),
             |(pos, dir), (rot, amount)| {
                 let new_rot = rot * dir;
-                (pos + new_rot.clone() * *amount, new_rot)
+                (pos + new_rot * *amount, new_rot)
             },
         )
         .0;
@@ -61,11 +61,10 @@ fn part2(steps: &[(Matrix2<i32>, i32)]) -> String {
     steps.iter().find(|(rot, amount)| {
         dir = rot * dir;
         (0..*amount)
-            .find(|_| {
+            .any(|_| {
                 pos = pos + dir;
                 !visited.insert(pos.to_array())
             })
-            .is_some()
     });
     (pos.x.abs() + pos.y.abs()).to_string()
 }

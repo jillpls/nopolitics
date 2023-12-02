@@ -1,15 +1,15 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
 #[allow(dead_code, unreachable_code, unused_variables, unused_mut)] // TODO
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
-    let mut triangles = nopolitics::parse::file_to_lines(&path)?
+    let mut triangles = nopolitics::parse::file_to_lines(path)?
         .iter()
         .map(|s| {
             s.split_whitespace()
@@ -50,12 +50,11 @@ fn part1(mut triangles: Vec<Vec<u32>>) -> String {
 fn part2(triangles: Vec<Vec<u32>>) -> String {
     let vertical_triangles = triangles
         .chunks(3)
-        .map(|v| {
+        .flat_map(|v| {
             vec![
                 v[0][0], v[1][0], v[2][0], v[0][1], v[1][1], v[2][1], v[0][2], v[1][2], v[2][2],
             ]
         })
-        .flatten()
         .collect::<Vec<u32>>()
         .chunks(3)
         .map(|x| x.to_vec())

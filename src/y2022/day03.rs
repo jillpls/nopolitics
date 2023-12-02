@@ -1,12 +1,12 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let backpacks = nopolitics::parse::file_to_lines(path)?;
     benchmark.stop_parse_start_part();
@@ -50,7 +50,7 @@ fn part2(backpacks: &[String]) -> String {
                     return calculate_priority(c);
                 }
             }
-            return 0;
+            0
         })
         .sum::<u32>()
         .to_string()

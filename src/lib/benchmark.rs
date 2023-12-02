@@ -1,30 +1,43 @@
 use crate::Part;
-use std::fmt::{Display, Formatter};
-use std::iter::Sum;
-use std::ops::Add;
-use std::time::{Duration, Instant};
+use core::fmt::{Formatter, Display};
+use core::iter::Sum;
+use core::ops::Add;
+use core::time::Duration;
+use std::time::Instant;
 
 #[derive(Default, Debug, Copy, Clone)]
+#[allow(clippy::module_name_repetitions)]
 pub struct BenchmarkResult {
+    /// Duration of parse.
     parse: Option<Duration>,
+    /// Duration of calculation.
     part: Option<Duration>,
+    /// Start time of parsing.
     parse_start: Option<Instant>,
+    /// Start time of calculation.
     part_start: Option<Instant>,
-    part_id: Part,
+    /// Part identifier.
+    pub part_id: Part,
 }
 
-impl Add<BenchmarkResult> for BenchmarkResult {
-    type Output = BenchmarkResult;
+impl Add<Self> for BenchmarkResult {
+    type Output = Self;
 
-    fn add(self, rhs: BenchmarkResult) -> Self::Output {
+    //noinspection RsExternalLinter
+    //noinspection RsExternalLinter
+    #[inline]
+    #[allow(clippy::arithmetic_side_effects)]
+    fn add(self, rhs: Self) -> Self::Output {
         self + &rhs
     }
 }
 
-impl Add<&BenchmarkResult> for BenchmarkResult {
-    type Output = BenchmarkResult;
+impl Add<&Self> for BenchmarkResult {
+    type Output = Self;
 
-    fn add(self, rhs: &BenchmarkResult) -> Self::Output {
+    #[inline]
+    #[allow(clippy::arithmetic_side_effects)]
+    fn add(self, rhs: &Self) -> Self::Output {
         let part = Some(self.part.unwrap_or_default() + rhs.part.unwrap_or_default());
         let parse = Some(self.parse.unwrap_or_default() + rhs.parse.unwrap_or_default());
         Self {
@@ -35,20 +48,30 @@ impl Add<&BenchmarkResult> for BenchmarkResult {
     }
 }
 
-impl<'a> Sum<&'a BenchmarkResult> for BenchmarkResult {
-    fn sum<I: Iterator<Item = &'a BenchmarkResult>>(iter: I) -> Self {
-        iter.fold(BenchmarkResult::default(), |prev, next| prev + next)
+#[allow(clippy::single_char_lifetime_names)]
+impl<'a> Sum<&'a Self> for BenchmarkResult {
+
+    #[inline]
+    #[allow(clippy::arithmetic_side_effects)]
+    fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
+        iter.fold(Self::default(), |prev, next| prev + next)
     }
 }
 
 impl Sum for BenchmarkResult {
+
+    #[inline]
+    #[allow(clippy::arithmetic_side_effects)]
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-        iter.fold(BenchmarkResult::default(), |prev, next| prev + next)
+        iter.fold(Self::default(), |prev, next| prev + next)
     }
 }
 
 impl Display for BenchmarkResult {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+
+    #[inline]
+    #[allow(clippy::min_ident_chars)]
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
             "Parse: {} | Part: {} | Combined: {}",
@@ -60,10 +83,13 @@ impl Display for BenchmarkResult {
 }
 
 impl BenchmarkResult {
-    pub fn part(&self) -> Part {
+    #[inline]
+    pub const fn part(&self) -> Part {
         self.part_id
     }
-    pub fn new(part: Part) -> Self {
+
+    #[inline]
+    const fn new(part: Part) -> Self {
         Self {
             parse: None,
             part: None,
@@ -73,10 +99,12 @@ impl BenchmarkResult {
         }
     }
 
+    #[inline]
     pub fn start_parse(&mut self) {
         self.parse_start = Some(Instant::now());
     }
 
+    #[inline]
     pub fn new_and_start(part: Part) -> Self {
         let mut r = Self::new(part);
         r.start_parse();

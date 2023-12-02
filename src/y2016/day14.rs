@@ -1,6 +1,6 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Err(Error::Default)
@@ -8,7 +8,7 @@ pub fn create_solution() -> Result<Solution, Error> {
 }
 
 #[allow(dead_code, unreachable_code, unused_variables, unused_mut)] // TODO
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     todo!();
     benchmark.stop_parse_start_part();

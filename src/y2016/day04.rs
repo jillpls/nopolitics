@@ -2,7 +2,7 @@ use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
 use std::cmp::Ordering;
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
@@ -26,7 +26,7 @@ fn parse_line(line: &str) -> (Vec<char>, [char; 5], i32) {
 }
 
 #[allow(dead_code, unreachable_code, unused_variables, unused_mut)] // TODO
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let mut lines = nopolitics::parse::file_to_lines(path)?
         .iter()
@@ -36,7 +36,11 @@ fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
     Ok(match part {
         Part::Part(1) => SolutionResult::part1(part1(&lines), benchmark.stop_part_and_owned()),
         Part::Part(2) => SolutionResult::part2(part2(&mut lines), benchmark.stop_part_and_owned()),
-        Part::All => SolutionResult::part1and2(part1(&lines), part2(&mut lines), benchmark.stop_part_and_owned()),
+        Part::All => SolutionResult::part1and2(
+            part1(&lines),
+            part2(&mut lines),
+            benchmark.stop_part_and_owned(),
+        ),
         _ => {
             return Err(Error::Default);
         }
@@ -79,8 +83,12 @@ fn part1(lines: &[(Vec<char>, [char; 5], i32)]) -> String {
         .to_string()
 }
 
-fn part2(lines: &mut[(Vec<char>, [char; 5], i32)]) -> String {
+fn part2(lines: &mut [(Vec<char>, [char; 5], i32)]) -> String {
     shift(lines);
     // lines.iter().for_each(|x| println!("{}", x.0.iter().collect::<String>()));
-    lines.iter().find(|x| x.0.iter().collect::<String>().contains("north")).map(|x| x.2.to_string()).unwrap_or_default()
+    lines
+        .iter()
+        .find(|x| x.0.iter().collect::<String>().contains("north"))
+        .map(|x| x.2.to_string())
+        .unwrap_or_default()
 }

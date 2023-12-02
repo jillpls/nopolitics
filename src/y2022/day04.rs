@@ -1,13 +1,13 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::parse::vec_to_tuple;
 use nopolitics::{Error, Part, Solution, SolutionResult};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let assignments = nopolitics::parse::file_to_lines(path)?;
     let pairs: Vec<((i32, i32), (i32, i32))> = assignments
@@ -35,14 +35,16 @@ fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
     })
 }
 
-fn part1(pairs: &[((i32, i32), (i32, i32))]) -> String {
+type Pair = ((i32, i32), (i32, i32));
+
+fn part1(pairs: &[Pair]) -> String {
     pairs
         .iter()
-        .filter(|((l1, h1), (l2, h2))| l1 <= l2 && h1 >= h2 || l2 <= l1 && h2 >= h2)
+        .filter(|((l1, h1), (l2, h2))| l1 <= l2 && h1 >= h2 || l2 <= l1 && h2 >= h1)
         .count()
         .to_string()
 }
-fn part2(pairs: &[((i32, i32), (i32, i32))]) -> String {
+fn part2(pairs: &[Pair]) -> String {
     pairs
         .iter()
         .filter(|((l1, h1), (l2, h2))| h1 >= l2 && l1 <= h2)

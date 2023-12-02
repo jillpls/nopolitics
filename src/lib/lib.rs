@@ -1,3 +1,12 @@
+#![warn(
+clippy::all,
+clippy::pedantic,
+clippy::nursery,
+clippy::cargo,
+)]
+
+#![allow(clippy::implicit_return)]
+
 use crate::benchmark::BenchmarkResult;
 use crate::parse::ParseError;
 use std::collections::HashMap;
@@ -8,7 +17,7 @@ use std::path::{Path, PathBuf};
 
 pub mod benchmark;
 pub mod parse;
-mod types;
+pub mod types;
 pub use types::*;
 
 #[derive(Default, Debug, Eq, PartialEq, Hash, Copy, Clone)]
@@ -33,7 +42,7 @@ pub enum Error {
     Parse(ParseError),
 }
 
-impl From<ParseError> for crate::Error {
+impl From<ParseError> for Error {
     fn from(value: ParseError) -> Self {
         Self::Parse(value)
     }
@@ -74,14 +83,16 @@ impl SolutionResult {
     }
 }
 
+type Solve = dyn Fn(&Path, Part) -> Result<SolutionResult, Error>;
+
 pub struct Solution {
     path: PathBuf,
-    solve: Box<dyn Fn(&PathBuf, Part) -> Result<SolutionResult, Error>>,
-    solve_parallel: Option<Box<dyn Fn(&PathBuf, Part) -> Result<SolutionResult, Error>>>,
+    solve: Box<Solve>,
+    solve_parallel: Option<Box<Solve>>,
 }
 
 impl Solution {
-    pub fn new<S: Fn(&PathBuf, Part) -> Result<SolutionResult, Error> + 'static>(
+    pub fn new<S: Fn(&Path, Part) -> Result<SolutionResult, Error> + 'static>(
         path: &str,
         solve: S,
         solve_parallel: Option<S>,
@@ -100,7 +111,7 @@ impl Solution {
             path,
             solve: Box::new(solve),
             solve_parallel: solve_parallel.map(|f| {
-                Box::new(f) as Box<dyn Fn(&PathBuf, Part) -> Result<SolutionResult, Error>>
+                Box::new(f) as Box<dyn Fn(&Path, Part) -> Result<SolutionResult, Error>>
             }),
         }
     }
@@ -159,12 +170,20 @@ impl SolutionTester {
     pub fn test_part2_single_thread(&self) {
         let r = self
             .solution
-            .run(false, "example.txt", Part::Part(2))
+            .run(false, self.part2path().as_str(), Part::Part(2))
             .unwrap();
         assert_eq!(
             r.results[&2],
             read_to_string(self.solution.path("example_result_part2.txt")).unwrap()
         );
+    }
+
+    fn part2path(&self) -> String {
+        if self.solution.path("example2.txt").exists() {
+            "example2.txt".to_string()
+        } else {
+            "example.txt".to_string()
+        }
     }
 
     pub fn test_part2_parallel(&self) {
@@ -173,7 +192,7 @@ impl SolutionTester {
         }
         let r = self
             .solution
-            .run(true, "example.txt", Part::Part(2))
+            .run(true, self.part2path().as_str(), Part::Part(2))
             .unwrap();
         assert_eq!(
             r.results[&2],

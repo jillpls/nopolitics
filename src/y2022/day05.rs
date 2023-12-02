@@ -1,17 +1,17 @@
 use nopolitics::benchmark::BenchmarkResult;
 use nopolitics::{Error, Part, Solution, SolutionResult};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn create_solution() -> Result<Solution, Error> {
     Ok(Solution::new(module_path!(), solve, None))
 }
 
-fn solve(path: &PathBuf, part: Part) -> Result<SolutionResult, Error> {
+fn solve(path: &Path, part: Part) -> Result<SolutionResult, Error> {
     let mut benchmark = BenchmarkResult::new_and_start(part);
     let lines = nopolitics::parse::file_to_lines(path)?;
     let split = lines.split(|s| s.trim().is_empty()).collect::<Vec<_>>();
-    let stacks = parse_stacks(&split[0]);
-    let instructions = parse_instructions(&split[1]);
+    let stacks = parse_stacks(split[0]);
+    let instructions = parse_instructions(split[1]);
     benchmark.stop_parse_start_part();
     Ok(match part {
         Part::Part(1) => SolutionResult::part1(
@@ -104,7 +104,7 @@ fn parse_instructions(lines: &[String]) -> Vec<(usize, usize, usize)> {
     lines
         .iter()
         .map(|x| {
-            let s = x.split_whitespace().into_iter().collect::<Vec<&str>>();
+            let s = x.split_whitespace().collect::<Vec<&str>>();
             (
                 s[1].parse::<usize>().unwrap(),
                 s[3].parse::<usize>().unwrap() - 1,
@@ -122,7 +122,7 @@ mod tests {
     fn test_parse_stacks() {
         let lines = nopolitics::parse::file_to_lines("input/y2022/day05/example.txt").unwrap();
         let split = lines.split(|s| s.trim().is_empty()).collect::<Vec<_>>();
-        let r = parse_stacks(&split[0]);
+        let r = parse_stacks(split[0]);
         assert_eq!(r.len(), 3);
         assert_eq!(r[0], vec!['Z', 'N'])
     }
@@ -131,7 +131,7 @@ mod tests {
     fn test_parse_instructions() {
         let lines = nopolitics::parse::file_to_lines("input/y2022/day05/example.txt").unwrap();
         let split = lines.split(|s| s.trim().is_empty()).collect::<Vec<_>>();
-        let r = parse_instructions(&split[1]);
+        let r = parse_instructions(split[1]);
         assert_eq!(r.len(), 4);
         assert_eq!(r[0], (1, 1, 0));
     }

@@ -6,6 +6,7 @@ use std::collections::HashMap;
 mod y2016;
 mod y2022;
 mod y2023;
+mod xx;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -29,7 +30,7 @@ fn main() {
 
     if !args.all && args.year.is_none() && args.day.is_none() {
         args.year = Some(2023);
-        args.day = Some(1);
+        args.day = Some(2);
     }
 
     let mut year_solutions: HashMap<usize, _> = HashMap::new();
