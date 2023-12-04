@@ -17,3 +17,4 @@ path = "src/lib/lib.rs"
 clap = { version = "4.4.8", features = ["derive"] }
 num-traits = "0.2.17"
 derive_more = "0.99.17"
+regex = "1.10.2"

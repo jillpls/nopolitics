@@ -107,7 +107,6 @@ fn part1(structure: &FileStructure) -> String {
 
 fn part2(structure: &FileStructure) -> String {
     let unused = 70_000_000 - structure.nodes[0].size;
-    println!("{}", unused);
     structure
         .nodes
         .iter()
